@@ -1,0 +1,30 @@
+services:
+  app:
+    container_name: server_planning_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+     - mysql
+
+  mysql:
+    image: mysql:8.0.33
+    container_name: mysql_planning_app
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    ports:
+      - '3306:${DB_PORT}'
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      # - ./data:/var/lib/mysql
+
+volumes:
+  mysql-data:
